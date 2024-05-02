@@ -47,7 +47,15 @@ class ProductController extends Controller
     public function create(Request $request)
     {
         // $image = $request->file("image")->move(public_path(), "tes.png");
- 
+    // try {
+    //     $product = Product::create([
+    //         'name' => $request->name,
+    //         'image' => $request->image,
+    //         'desc' => $request->desc,
+    //         'price' => $request->price,
+    //         'category_id' => $request->category_id,
+    //         'stock' => $request->stock
+    //     ]);
 
 
         $product = Product::create([
