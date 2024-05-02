@@ -48,17 +48,22 @@ class ProductController extends Controller
     {
         // $image = $request->file("image")->move(public_path(), "tes.png");
 
-        // try {
-        //     $product = Product::create([
-        //         'name' => $request->name,
-        //         'image' => $request->image,
-        //         'desc' => $request->desc,
-        //         'price' => $request->price,
-        //         'category_id' => $request->category_id,
-        //         'stock' => $request->stock
-        //     ]);
+    //      try {
+    //     $product = Product::create([
+    //         'name' => $request->name,
+    //         'image' => $request->image,
+    //         'desc' => $request->desc,
+    //         'price' => $request->price,
+    //         'category_id' => $request->category_id,
+    //         'stock' => $request->stock
+    //     ]);
+    // } catch (\Exception $e) {
+    //     return response()->json([
+    //         "message" => "Failed to store product: " . $e->getMessage()
+    //     ], 400);
+    // }
 
-
+    
         $product = Product::create([
             'name' => $request->name,
             'image' => $request->image,
