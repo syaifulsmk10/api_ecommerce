@@ -103,27 +103,37 @@ class ProductController extends Controller
         // }
     }
 
-    public function update(Request $request, $id)
+      public function update(Request $request, $id)
     {
         $product = Product::findOrFail($id);
 
-
-        if ($request->name) {
+        if ($request->has('name')) {
             $product->name = $request->name;
         }
 
-        if ($request->price) {
+        if ($request->has('image')) {
+            $product->image = $request->image;
+        }
+
+        if ($request->has('desc')) {
+            $product->desc = $request->desc;
+        }
+
+        if ($request->has('price')) {
             $product->price = $request->price;
         }
 
-        if ($request->quantity) {
-            $product->quantity = $request->quantity;
+        if ($request->has('category_id')) {
+            $product->category_id = $request->category_id;
+        }
+
+        if ($request->has('stock')) {
+            $product->stock = $request->stock;
         }
 
         $product->save();
 
-        return response()->json(['message' => 'update product successfully'], 201);
-
+        return response()->json(['message' => 'Product updated successfully'], 200);
     }
         
 
