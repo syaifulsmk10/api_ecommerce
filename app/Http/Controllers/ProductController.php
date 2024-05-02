@@ -112,27 +112,27 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        if ($request->has('name')) {
+        if ($request->name) {
             $product->name = $request->name;
         }
 
-        if ($request->has('image')) {
+        if ($request->image) {
             $product->image = $request->image;
         }
 
-        if ($request->has('desc')) {
+        if ($request->desc) {
             $product->desc = $request->desc;
         }
 
-        if ($request->has('price')) {
+        if ($request->price) {
             $product->price = $request->price;
         }
 
-        if ($request->has('category_id')) {
+        if ($request->category_id) {
             $product->category_id = $request->category_id;
         }
 
-        if ($request->has('stock')) {
+        if ($request->stock) {
             $product->stock = $request->stock;
         }
 
