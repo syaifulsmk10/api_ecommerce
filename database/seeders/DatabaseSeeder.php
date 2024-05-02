@@ -18,8 +18,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-       $category1 = Category::create(['name' => 'Electronics']);
-        $category2 = Category::create(['name' => 'Clothing']);
+       $category1 = Category::create(['name' => 'elektronik']);
+        $category2 = Category::create(['name' => 'school']);
 
         $product1 = Product::create([
             'name' => 'Laptop',
@@ -31,8 +31,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $product2 = Product::create([
-            'name' => 'T-shirt',
-            'image' => 'tshirt.jpg',
+            'name' => 'book',
+            'image' => 'book.jpg',
             'desc' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
             'price' => 1000,
             'category_id' => $category2->id,

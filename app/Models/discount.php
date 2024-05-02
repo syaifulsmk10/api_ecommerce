@@ -15,6 +15,11 @@ class discount extends Model
 
     public function product()
     {
-        return $this->belongsTo(Product::class);
+         return $this->belongsTo(Product::class)->onDelete('cascade');
+    }
+
+     public function carts()
+       {
+        return $this->hasMany(Cart::class)->onDelete('cascade');
     }
 }

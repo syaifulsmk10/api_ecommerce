@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
-        $table->enum('discount_type', ['1', '2']);
-        $table->foreignId('product_id')->nullable()->constrained();
-        $table->string('coupon_code')->nullable();
-        $table->integer('discount_value');
-        $table->dateTime('time_start');
-        $table->dateTime('time_end');
-        $table->timestamps();
+            $table->enum('discount_type', ['1', '2']);
+            $table->foreignId('product_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('coupon_code')->nullable();
+            $table->integer('discount_value');
+            $table->dateTime('time_start');
+            $table->dateTime('time_end');
+            $table->timestamps();
         });
     }
 

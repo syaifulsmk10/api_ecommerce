@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,3 +23,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/add-to-cart', [CartController::class, 'addToCart']);
 Route::post('/apply-coupon', [CartController::class, 'applyCoupon']);
+
+
+
+Route::prefix('/product')->group(function () {
+    Route::get('/', [ProductController::class, 'index']);
+    Route::post('/create', [ProductController::class, 'create']);
+    Route::put('/update/{id}', [ProductController::class, 'update']);
+   Route::delete('/delete/{id}', [ProductController::class, 'destroy']);
+});
+

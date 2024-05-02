@@ -12,6 +12,12 @@ class product extends Model
     
     protected $fillable = ['name', 'image', 'desc', 'price', 'category_id', 'stock'];
 
+    public function cart()
+    {
+       return $this->hasMany(Cart::class)->onDelete('cascade');
+    }
+
+
     public function category()
     {
         return $this->belongsTo(Category::class);
@@ -19,6 +25,8 @@ class product extends Model
 
     public function discounts()
     {
-        return $this->hasMany(Discount::class);
+       return $this->hasMany(Discount::class)->onDelete('cascade');
     }
+
+    
 }
