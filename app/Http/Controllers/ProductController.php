@@ -47,15 +47,16 @@ class ProductController extends Controller
     public function create(Request $request)
     {
         // $image = $request->file("image")->move(public_path(), "tes.png");
-    // try {
-    //     $product = Product::create([
-    //         'name' => $request->name,
-    //         'image' => $request->image,
-    //         'desc' => $request->desc,
-    //         'price' => $request->price,
-    //         'category_id' => $request->category_id,
-    //         'stock' => $request->stock
-    //     ]);
+
+        // try {
+        //     $product = Product::create([
+        //         'name' => $request->name,
+        //         'image' => $request->image,
+        //         'desc' => $request->desc,
+        //         'price' => $request->price,
+        //         'category_id' => $request->category_id,
+        //         'stock' => $request->stock
+        //     ]);
 
 
         $product = Product::create([
@@ -127,43 +128,6 @@ class ProductController extends Controller
         
 
 
-
-    //     $updateData = $product->update([
-    //         'name' => $request->name,
-    //         'image' => $request->image,
-    //         'desc' => $request->desc,
-    //         'price' => $request->price,
-    //         'category_id' => $request->category_id,
-    //         'stock' => $request->stock
-    //     ]);
-
-    //     if (!$updateData) {
-    //         return response()->json([
-    //             "message" => "Failed to update product data"
-    //         ], 400);
-    //     }
-
-    //     if ($request->has('discount_type') && $request->has('discount_value') && $request->has('time_start') && $request->has('time_end')) {
-    //         $discount = Discount::updateOrCreate(
-    //             ['product_id' => $id],
-    //             [
-    //                 'discount_type' => $request->discount_type,
-    //                 'discount_value' => $request->discount_value,
-    //                 'time_start' => $request->time_start,
-    //                 'time_end' => $request->time_end
-    //             ]
-    //         );
-    //     } elseif ($product->discount) {
-    //     $product->discount->delete();
-    //     $discount = null;
-    // }
-
-    //     return response()->json([
-    //         "message" => "Successfully updated product data",
-    //         "product" => $product,
-    //         "discount" => $discount
-    //     ], 200);
-//     // }
     public function destroy($id)
     {
 
