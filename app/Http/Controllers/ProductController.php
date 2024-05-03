@@ -46,8 +46,8 @@ class ProductController extends Controller
 
     public function create(Request $request)
     {
-        // $image = $request->file("image")->move(public_path(), "tes.png");
-
+        
+    // $imagePath = $request->file("image")->move(public_path(), "tes.png");
     //      try {
     //     $product = Product::create([
     //         'name' => $request->name,
@@ -63,23 +63,32 @@ class ProductController extends Controller
     //     ], 400);
     // }
 
-    
-        $product = Product::create([
-            'name' => $request->name,
-            'image' => $request->image,
-            'desc' => $request->desc,
-            'price' => $request->price,
-            'category_id' => $request->category_id,
-            'stock' => $request->stock
-        ]);
+    $imagePath = $request->file("image")->move(public_path(), $request->file("image")->getClientOriginalName());
 
-        if(!$product){
-             return response()->json([
-                "message" => "Failed to create product"
+        if(!$imagePath){
+            return response()->json([
+                "message" => "Failed to upload image"
             ], 400);
         }
-        
-         if ($request->has('discount_type') && $request->has('discount_value') && $request->has('time_start') && $request->has('time_end')) {
+
+            $product = Product::create([
+                'name' => $request->name,
+                'image' => $imagePath,
+                'desc' => $request->desc,
+                'price' => $request->price,
+                'category_id' => $request->category_id,
+                'stock' => $request->stock
+            ]);
+
+            if(!$product){
+                return response()->json([
+                    "message" => "Failed to create product"
+                ], 400);
+            }
+
+            $discount = null;
+
+            if ($request->has('discount_type') && $request->has('discount_value') && $request->has('time_start') && $request->has('time_end')) {
                 $discount = Discount::create([
                     'discount_type' => $request->discount_type,
                     'product_id' => $product->id,
@@ -87,25 +96,14 @@ class ProductController extends Controller
                     'time_start' => $request->time_start,
                     'time_end' => $request->time_end
                 ]);
-
             }
 
             return response()->json([
                 "message" => "Success creating product",
                 "product" => $product,
-                "discount" => $discount ?? null
+                "discount" => $discount
             ], 201);
 
-
-
-
-        // if ($product) {
-        //    
-        // } else {
-        //     return response()->json([
-        //         "message" => "Failed to create product"
-        //     ], 400);
-        // }
     }
 
       public function update(Request $request, $id)
