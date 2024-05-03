@@ -8,6 +8,8 @@ use App\Models\cart;
 use App\Models\category;
 use App\Models\discount;
 use App\Models\product;
+use App\Models\Role;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
@@ -18,6 +20,31 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        Role::create([
+            "name" => "admin",
+        ]);
+
+        Role::create([
+            "name" => "siswa",
+        ]);
+
+         User::create([
+        "name" => "admin",
+        "username" => "admin",
+        "email" => "admin@admin.com",
+        "password" => bcrypt("admin_password"),
+        "role_id" => 1
+    ]);
+
+        User::create([
+            "name" => "user",
+            "username" => "user",
+             "email" => "user@user.com",
+            "password" => bcrypt("user_password"),
+            "role_id" => 2, 
+        ]);
+
+
        $category1 = Category::create(['name' => 'elektronik']);
         $category2 = Category::create(['name' => 'school']);
 

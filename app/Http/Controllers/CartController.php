@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\Discount;
 use App\Models\Cart;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
@@ -43,6 +44,7 @@ class CartController extends Controller
         $totalPrice = $discountedPrice * $quantity;
 
         cart::create([
+            // "user_id" => Auth::user()->id,
             "product_id" => $product->id,
             "quantity" => $quantity,
             "total_price" => $totalPrice,
@@ -116,5 +118,22 @@ class CartController extends Controller
         //     ]);
 
         return response()->json(['message' => 'Voucher code applied successfully'], 200);
+    }
+
+
+    public function getCart()
+    {
+        $cart = Cart::where("user_id", Auth::user()->id)->get();
+
+        $total_harga = 0;
+
+        foreach ($cart as $carts) {
+            $total_harga += $carts->total_price;
+        }
+
+        return response()->json([
+            "cart" => $cart,
+            "total_harga" => $total_harga
+        ]);
     }
 }

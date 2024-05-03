@@ -8,41 +8,24 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $product = product::all();
+        $product = product::orderByDesc("created_at");
+
+        if($request->category_id){
+            $product = $product->where("category_id", $request->category_id);
+        }
+
+        $product = $product->get();
+
+
         return response()->json([
             "message" => "success get product",
             "data" => $product
         ]);
     }
 
-    //     public function create(Request $request)
-// {
-//     $productData = $request->input('product');
-//     $discountData = $request->input('discount');
 
-    //     // Simpan produk
-//     $product = new Product();
-//     $product->name = $productData['name'];
-//     $product->image = $productData['image'];
-//     $product->desc = $productData['desc'];
-//     $product->price = $productData['price'];
-//     $product->category_id = $productData['category_id'];
-//     $product->stock = $productData['stock'];
-//     $product->save();
-
-    //     // Simpan diskon
-//     $discount = new Discount();
-//     $discount->discount_type = $discountData['discount_type'];
-//     $discount->product_id = $product->id;
-//     $discount->discount_value = $discountData['discount_value'];
-//     $discount->time_start = $discountData['time_start'];
-//     $discount->time_end = $discountData['time_end'];
-//     $discount->save();
-
-    //     return response()->json(['message' => 'Product and discount created successfully'], 201);
-// }
 
     public function create(Request $request)
     {
@@ -107,38 +90,17 @@ class ProductController extends Controller
     }
 
       public function update(Request $request, $id)
-    {
-        $product = Product::findOrFail($id);
+{
+    $product = Product::findOrFail($id);
 
-        if ($request->name) {
-            $product->name = $request->name;
-        }
-
-        if ($request->image) {
-            $product->image = $request->image;
-        }
-
-        if ($request->desc) {
-            $product->desc = $request->desc;
-        }
-
-        if ($request->price) {
-            $product->price = $request->price;
-        }
-
-        if ($request->category_id) {
-            $product->category_id = $request->category_id;
-        }
-
-        if ($request->stock) {
-            $product->stock = $request->stock;
-        }
-
+    if ($request->has('name')) {
+        $product->name = $request->name;
+        // Simpan perubahan hanya jika ada perubahan pada atribut 'name'
         $product->save();
-
-        return response()->json(['message' => 'Product updated successfully'], 200);
     }
-        
+
+    return response()->json($product, 200);
+}
 
 
     public function destroy($id)

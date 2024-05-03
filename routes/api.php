@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,15 +23,25 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::post('/add-to-cart', [CartController::class, 'addToCart']);
-Route::post('/apply-coupon', [CartController::class, 'applyCoupon']);
+Route::post("/login", [UserController::class, 'postLogin'])->name("login");
+Route::post("/register", [UserController::class, 'registerUser'])->name("register");
+
+Route::get('/product/index', [ProductController::class, 'index']);
+Route::get('/category', [CategoryController::class, 'index']);
 
 
 
-Route::prefix('/product')->group(function () {
-    Route::get('/', [ProductController::class, 'index']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [UserController::class, 'getUser']);
+
+    Route::get('/cart', [CartController::class, 'getcart']);
+    Route::post('/add-to-cart', [CartController::class, 'addToCart']);
+    Route::post('/apply-coupon', [CartController::class, 'applyCoupon']);
+
+    Route::prefix('/product')->group(function () {
     Route::post('/create', [ProductController::class, 'create']);
     Route::put('/update/{id}', [ProductController::class, 'update']);
-   Route::delete('/delete/{id}', [ProductController::class, 'destroy']);
+    Route::delete('/delete/{id}', [ProductController::class, 'destroy']);
 });
-
+   
+});
