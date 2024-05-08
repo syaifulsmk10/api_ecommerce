@@ -75,7 +75,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $discount2 = Discount::create([
-            'discount_type' => 2, 
+            'discount_type' => 2,   
             'product_id' => $product2->id,
             'discount_value' => 10, 
             'coupon_code' => 'aaa',
@@ -88,12 +88,14 @@ class DatabaseSeeder extends Seeder
 
         Cart::create([
             'product_id' => $product1->id,
+            'user_id' => 2,
             'discount_id' => $discount1->id,
             'quantity' => 2,
             'total_price' => $discountedPriceProduct1 * 2
         ]);
 
         Cart::create([
+            'user_id' => 1,
             'product_id' => $product2->id,
             'discount_id' => $discount2->id,
             'quantity' => 3,

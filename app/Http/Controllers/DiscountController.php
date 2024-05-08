@@ -17,12 +17,12 @@ class DiscountController extends Controller
 
     public function create(Request $request){
         $discount = discount::create([
-        'name' => $request->name,
-        'image' => $request->image,
-        'desc' => $request->desc,
-        'price' => $request->price,
-        'category_id' => $request->category_id,
-        'stock' => $request->stock
+        'discount_type' => $request->discount_type,
+        'product_id' => $request->product_id,
+        'coupon_code' => $request->coupon_code,
+        'discount_value' => $request->discount_value,
+        'time_start' => $request->time_start,
+        'time_end' => $request->time_end
         ]);
 
          if ($discount) {
@@ -42,12 +42,12 @@ class DiscountController extends Controller
     {
         $data = discount::findOrFail($request->id);
         $updateData = $data->update([
-            'name' => $request->name,
-            'image' => $request->image,
-            'desc' => $request->desc,
-            'price' => $request->price,
-            'category_id' => $request->category_id,
-            'stock' => $request->stock
+           'discount_type' => $request->discount_type,
+            'product_id' => $request->product_id,
+            'coupon_code' => $request->coupon_code,
+            'discount_value' => $request->discount_value,
+            'time_start' => $request->time_start,
+            'time_end' => $request->time_end
         ]);
 
          if ($updateData) {
@@ -58,7 +58,7 @@ class DiscountController extends Controller
         } else {
             return response()->json([
                 "message" => "Gagal mengupdate data"
-            ], 400); // Mengembalikan status 400 jika gagal membuat buku
+            ], 400); 
         }
 
     }

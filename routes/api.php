@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -42,6 +43,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/create', [ProductController::class, 'create']);
     Route::put('/update/{id}', [ProductController::class, 'update']);
     Route::delete('/delete/{id}', [ProductController::class, 'destroy']);
+
+   
 });
+    Route::prefix('/discount')->group(function () {
+       Route::get('/', [DiscountController::class, 'index']);
+       Route::post('/create', [DiscountController::class, 'create']);
+       });
    
 });

@@ -23,6 +23,7 @@ class CartController extends Controller
         $product = Product::findOrFail($request->product_id);
         $quantity = $request->quantity;
         $coupon_code = $request->coupon_code;
+        $discountedPrice = $product->price; // Set default price
 
         $discount = Discount::where('product_id', $product->id)
             ->where(function ($query) {
@@ -44,7 +45,7 @@ class CartController extends Controller
         $totalPrice = $discountedPrice * $quantity;
 
         cart::create([
-            // "user_id" => Auth::user()->id,
+            "user_id" => Auth::user()->id,
             "product_id" => $product->id,
             "quantity" => $quantity,
             "total_price" => $totalPrice,
@@ -129,7 +130,7 @@ class CartController extends Controller
 
         foreach ($cart as $carts) {
             $total_harga += $carts->total_price;
-        }
+        }   
 
         return response()->json([
             "cart" => $cart,

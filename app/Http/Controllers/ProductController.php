@@ -29,22 +29,7 @@ class ProductController extends Controller
 
     public function create(Request $request)
     {
-        
-    // $imagePath = $request->file("image")->move(public_path(), "tes.png");
-    //      try {
-    //     $product = Product::create([
-    //         'name' => $request->name,
-    //         'image' => $request->image,
-    //         'desc' => $request->desc,
-    //         'price' => $request->price,
-    //         'category_id' => $request->category_id,
-    //         'stock' => $request->stock
-    //     ]);
-    // } catch (\Exception $e) {
-    //     return response()->json([
-    //         "message" => "Failed to store product: " . $e->getMessage()
-    //     ], 400);
-    // }
+       
 
     $imagePath = $request->file("image")->move(public_path(), $request->file("image")->getClientOriginalName());
 
@@ -89,15 +74,14 @@ class ProductController extends Controller
 
     }
 
-      public function update(Request $request, $id)
+    public function update(Request $request, $id)
 {
     $product = Product::findOrFail($id);
 
-    if ($request->has('name')) {
-        $product->name = $request->name;
-        // Simpan perubahan hanya jika ada perubahan pada atribut 'name'
-        $product->save();
-    }
+    $data = $request->only(['name', 'image', 'desc', 'price', 'category_id', 'stock']);
+
+    // Update data produk hanya untuk atribut yang diizinkan
+    $product->update($data);
 
     return response()->json($product, 200);
 }

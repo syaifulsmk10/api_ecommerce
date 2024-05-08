@@ -47,4 +47,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class, 'roles_id'); // Menentukan relasi bahwa User memiliki satu Role
     }
+
+    public function cart()
+    {
+        return $this->hasMany(cart::class);
+    }
 }
