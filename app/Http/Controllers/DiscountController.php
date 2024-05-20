@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 
 class DiscountController extends Controller
 {
+
+
      public function index(){
         $discount = discount::all();
         return response()->json([
@@ -16,6 +18,15 @@ class DiscountController extends Controller
     }
 
     public function create(Request $request){
+
+        $request->validate([
+        'discount_type' => 'required|integer',
+        'product_id' => 'required|integer',
+        'coupon_code' => 'nullable|min:8|max:8',
+        'discount_value' => 'required|integer',
+    ]);
+
+
         $discount = discount::create([
         'discount_type' => $request->discount_type,
         'product_id' => $request->product_id,
@@ -38,42 +49,28 @@ class DiscountController extends Controller
 
     }
 
-     public function update(Request $request)
-    {
-        $data = discount::findOrFail($request->id);
-        $updateData = $data->update([
-           'discount_type' => $request->discount_type,
-            'product_id' => $request->product_id,
-            'coupon_code' => $request->coupon_code,
-            'discount_value' => $request->discount_value,
-            'time_start' => $request->time_start,
-            'time_end' => $request->time_end
-        ]);
+       public function update(Request $request, $id)
+{
+    $discount = Discount::findOrFail($id);
+    $data = $request->only(['discount_type', 'product_id', 'coupon_code', 'discount_value', 'time_start', 'time_end']);
+    $discount->update($data);
+    return response()->json($discount, 200);
+}
 
-         if ($updateData) {
-            return response()->json([
-                "message" => "Berhasil mengupdate data",
-                "Data" => $data
-            ],200);
-        } else {
-            return response()->json([
-                "message" => "Gagal mengupdate data"
-            ], 400); 
-        }
+     
+public function destroy($id)
+{
+    $dataToDelete = Discount::findOrFail($id);
+    $deleteProced = $dataToDelete->delete();
 
+    if (!$deleteProced) {
+        return response()->json([
+            "Message" => "Gagal Menghapus Data!"
+        ], 400);
     }
 
-     public function destroy(Request $request)
-    {
-        $dataToDelete = discount::findOrFail($request->id);
-         $deleteProced = $dataToDelete->delete();
-
-         if(!$deleteProced) return response()->json([
-           "Message" => "Gagal Menghapus Data!"
-         ],400);
-
-         return response()->json([
-            "Message" => "Berhasil Menghapus Data!"
-         ],200);
-    }
+    return response()->json([
+        "Message" => "Berhasil Menghapus Data!"
+    ], 200);
+}
 }

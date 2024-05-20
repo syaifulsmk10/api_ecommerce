@@ -10,21 +10,33 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $product = product::orderByDesc("created_at");
+        $product = product::with('discount', 'ratings')->orderByDesc("created_at");
 
         if($request->category_id){
             $product = $product->where("category_id", $request->category_id);
         }
 
-        $product = $product->get();
+        $product = $product->paginate(10)->map(function ($product) {
+        return [
+            'id' => $product->id,
+            'name' => $product->name,
+            'image' => $product->image,
+            'desc' => $product->desc,
+            'price' => $product->price,
+            'category_id' => $product->category_id,
+            'stock' => $product->stock,
+            'created_at' => $product->created_at,
+            'updated_at' => $product->updated_at,
+            'product_rating' => $product->product_rating,
+            'discounted_price' => $product->discounted_price,
+            'discount_value' => $product->discount ? $product->discount->discount_value : 0,
+        ];
+    });
 
-
-        return response()->json([
-            "message" => "success get product",
-            "data" => $product
-        ]);
-    }
-
+    return response()->json([
+        "data" => $product
+    ]);
+}
 
 
     public function create(Request $request)
@@ -32,6 +44,7 @@ class ProductController extends Controller
        
 
     $imagePath = $request->file("image")->move(public_path(), $request->file("image")->getClientOriginalName());
+        $imagename = $request->file("image")->getClientOriginalName();
 
         if(!$imagePath){
             return response()->json([
@@ -41,7 +54,7 @@ class ProductController extends Controller
 
             $product = Product::create([
                 'name' => $request->name,
-                'image' => $imagePath,
+                'image' => $imagename,
                 'desc' => $request->desc,
                 'price' => $request->price,
                 'category_id' => $request->category_id,
@@ -80,7 +93,6 @@ class ProductController extends Controller
 
     $data = $request->only(['name', 'image', 'desc', 'price', 'category_id', 'stock']);
 
-    // Update data produk hanya untuk atribut yang diizinkan
     $product->update($data);
 
     return response()->json($product, 200);

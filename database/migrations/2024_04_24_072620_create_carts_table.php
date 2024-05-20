@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('discount_id')->onDelete('cascade')->nullable();
             $table->integer('quantity');
             $table->biginteger('total_price');
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

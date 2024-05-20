@@ -9,27 +9,33 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-     public function postLogin(Request $request)
+    
+    public function postLogin(Request $request)
     {
         $validate = $request->validate([
-            "name" => "required",
+            "email" => "required|email",
             "password" => "required",
         ]);
-        $token = User::where("name", $request->name)->first()->createToken('auth')->plainTextToken;
-
-        if (!Auth::attempt($validate)) return response()->json([
-            'message' => 'wrong username or password',
-            'data' => $validate
-        ], 404);
-
-        if (Auth::user()->role_id == 1) return response()->json([
-            'message' => 'success Login Admin',
-            'data' => $validate,
-            'token' => $token
-        ], 200);
-
+    
+        if (!Auth::attempt($validate)) {
+            return response()->json([
+                'message' => 'Wrong email or password',
+                'data' => $validate
+            ], 404);
+        }
+        $user = Auth::user();
+        $token = $user->createToken('auth')->plainTextToken;
+    
+        if ($user->role_id == 1) {
+            return response()->json([
+                'message' => 'Success Login Admin',
+                'data' => $validate,
+                'token' => $token
+            ], 200);
+        }
+    
         return response()->json([
-            'message' => 'success Login User',
+            'message' => 'Success Login User',
             'data' => $validate,
             'token' => $token
         ], 200);
@@ -63,16 +69,12 @@ class UserController extends Controller
             ]
         ], 200);
     } else {
-        $products = product::all(); 
-        // $cartItems = $user->cartItems(); 
-    
+
         return response()->json([
             'message' => 'success',
             'data' => [
                 'name' => $user->name,
-                'role' => 'user',
-                'products' => $products,
-                // 'cart' => $cartItems
+                'role' => 'user'
             ]
         ], 200);
         }

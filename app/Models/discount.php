@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\DiscountType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,5 +22,11 @@ class discount extends Model
      public function carts()
        {
         return $this->hasMany(Cart::class)->onDelete('cascade');
+    }
+
+    public function getDiscountTypeAttribute($value) {
+        $enum = DiscountType::fromValue((int) $value);
+
+        return $enum->key;
     }
 }
