@@ -6,7 +6,7 @@ use App\Enums\DiscountType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class discount extends Model
+class Discount extends Model
 {
     use HasFactory;
 
