@@ -83,13 +83,7 @@ class DatabaseSeeder extends Seeder
             'time_end' => Carbon::now()->addDays(10)
         ]);
 
-        $discount2 = Discount::create([
-            'discount_type' => 2,   
-            'discount_value' => 10, 
-            'coupon_code' => 'bbb',
-            'time_start' => Carbon::now(),
-            'time_end' => Carbon::now()->addDays(10)
-        ]);
+
 
         $discountedPriceProduct1 = $product1->price - ($product1->price * ($discount1->discount_value / 100));
         $discountedPriceProduct2 = $product2->price;
@@ -105,7 +99,6 @@ class DatabaseSeeder extends Seeder
         Cart::create([
             'user_id' => 2,
             'product_id' => $product2->id,
-            'discount_id' => $discount2->id,
             'quantity' => 1,
             'total_price' => $discountedPriceProduct2 * 1
         ]);

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('discounts', function (Blueprint $table) {
-            $table->id();
+            $table->id();   
             $table->enum('discount_type', ['1', '2']);
             $table->foreignId('product_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('coupon_code')->nullable();

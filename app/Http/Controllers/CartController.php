@@ -48,21 +48,28 @@ class CartController extends Controller
         }
         
         $totalPrice = $discountedPrice * $quantity;
-        $product->save();
+       $cartItem = Cart::where('user_id', Auth::user()->id)->where('status', 1)
+        ->where('product_id', $product->id)
+        ->first();
 
-
-        cart::create([
+    if ($cartItem) {
+        // If the product is already in the cart, update the quantity and total price
+        $cartItem->quantity += $quantity;
+        $cartItem->total_price += $totalPrice;
+        $cartItem->save();
+    } else {
+        // If the product is not in the cart, create a new cart item
+        Cart::create([
             "user_id" => Auth::user()->id,
             "product_id" => $product->id,
             "quantity" => $quantity,
             "total_price" => $totalPrice,
             "discount_id" => $discount ? $discount->id : null,
-           
         ]);
-
-        return response()->json(['message' => 'Product added to cart successfully.'], 200);
     }
 
+    return response()->json(['message' => 'Product added to cart successfully.'], 200);
+}
 
     
 public function updateQuantity(Request $request, $id)
@@ -94,7 +101,7 @@ $cart->save();
 
 
      $totalpri = 0;
-        $carts = Cart::all();
+        $carts = Cart::where('user_id', Auth::user()->id)->where('status',1)->get();
         foreach ($carts as $cartsItem) {
             $totalpri += $cartsItem->total_price;
         }
@@ -107,34 +114,34 @@ $cart->save();
 
 }
 
-    public function getCoupon(Request $request)
-    {
-        //  $cart = Cart::findOrFail($request->cart_id);
-    $coupon_code = $request->coupon_code;
+    // public function getCoupon(Request $request)
+    // {
 
-       $discount = Discount::where('coupon_code',  $coupon_code)
-                        ->first();
+    // $coupon_code = $request->coupon_code;
+
+    //    $discount = Discount::where('coupon_code',  $coupon_code)
+    //                     ->first();
 
 
-        if (!$discount || !(Carbon::now()->lessThanOrEqualTo(Carbon::parse($discount->time_end)->endOfDay()))) {
-            return response()->json(['message' => 'Invalid or expired voucher code'], 400);
-        }
+    //     if (!$discount || !(Carbon::now()->lessThanOrEqualTo(Carbon::parse($discount->time_end)->endOfDay()))) {
+    //         return response()->json(['message' => 'Invalid or expired voucher code'], 400);
+    //     }
      
-     return response()->json([
-            'data' => $discount,
-        ], 200);
-    }
+    //  return response()->json([
+    //         'data' => $discount,
+    //     ], 200);
+    // }
 
 
-    public function getCart()
+    public function getCart(Request $request)
     {
-        $cart = Cart::where("user_id", Auth::user()->id)->get();
-
+              
+     
+    $cart = Cart::where("user_id", Auth::user()->id)->where("status",1)->get();
 
         $cartItems = [];
-        $totalpri = 0;
+        $totalprice = 0;
        
-
         foreach ($cart as $cartsItem) {
             $name = $cartsItem->product->name;
             $image = $cartsItem->product->image;
@@ -147,23 +154,37 @@ $cart->save();
 
                 $price = $cartsItem->product->price;
             }
-           
-            $totalpri += $cartsItem->total_price;    
+
+            $totalprice += $cartsItem->quantity * $price;
+
+            $couponCode = $request->coupon_code;
+
+                if ($couponCode) {
+                    $discount = Discount::where('coupon_code', $couponCode)->first();
+                    
+                    if (!$discount || !(Carbon::now()->lessThanOrEqualTo(Carbon::parse($discount->time_end)->endOfDay()))) {
+                    return response()->json(['message' => 'Invalid or expired voucher code'], 400);}
+
+                $totalprice = $totalprice - ($totalprice * $discount->discount_value/100);
+
             
+                } else {
+                $totalprice = $totalprice;
+                }
+
              $cartItems[] = [
             "name" => $name,
             "image" => $image,
             "desc" => $desc,
             "quantity" => $quantity,
-            "price" => $price
+            "price" => $price,
         ];
         }
 
-    
-
         return response()->json([
             "cartItems" =>  $cartItems,
-             "totalpri" => $totalpri,
+             "totalprice" => $totalprice,
+        
         ]);
     }
 

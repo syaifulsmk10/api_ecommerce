@@ -16,7 +16,8 @@ class ProductController extends Controller
             $product = $product->where("category_id", $request->category_id);
         }
 
-        $product = $product->paginate(10)->map(function ($product) {
+        $products = $product->paginate(3);
+        $products->getCollection()->transform(function ($product) {
         return [
             'id' => $product->id,
             'name' => $product->name,
@@ -34,7 +35,7 @@ class ProductController extends Controller
     });
 
     return response()->json([
-        "data" => $product
+        $products
     ]);
 }
 

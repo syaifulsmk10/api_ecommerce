@@ -6,6 +6,9 @@ use App\Models\product;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -46,13 +49,30 @@ class UserController extends Controller
         $user = User::create([
             "name" => $request->name,
             "email" => $request->email,
-            "password" => bcrypt($request->password),
+            "password" => Hash::make($request->password),
             "role_id" => 2
         ]);
 
         return response()->json([
             'message' => 'success register admin',
             'data' => $user
+        ], 200);
+    }
+
+    public function logout(): JsonResponse
+    {
+        $user = auth()->user();
+        if($user){
+              // Menggunakan DB facade untuk truncate tabel tokens
+            DB::table('personal_access_tokens')->truncate();
+
+            return response()->json([
+                'message' => 'Logout success',
+            ], 200);
+        }
+
+        return response()->json([
+            'message' => 'No authenticated user',
         ], 200);
     }
 
@@ -79,6 +99,9 @@ class UserController extends Controller
         ], 200);
         }
     }
+
+
+    
 
 
     public function index(){

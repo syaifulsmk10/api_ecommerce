@@ -29,6 +29,8 @@ Route::post("/login", [UserController::class, 'postLogin'])->name("login");
 Route::post("/register", [UserController::class, 'registerUser'])->name("register");
 Route::get('/product/index', [ProductController::class, 'index']);
 Route::get('/category', [CategoryController::class, 'index']);
+Route::post('/logout', [UserController::class, 'logout'])->middleware('auth:sanctum');
+
 
 
 
@@ -66,5 +68,5 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('/checkOut', [CartController::class, 'checkOut']);
 Route::delete('/delete/{id}', [CartController::class, 'destroy']);
 Route::delete('/delete-all', [CartController::class, 'destroyAll']);  
-   
+
 });
