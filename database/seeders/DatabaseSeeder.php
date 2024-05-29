@@ -6,7 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\cart;
 use App\Models\category;
-use App\Models\discount;
+use App\Models\Discount;
 use App\Models\product;
 use App\Models\rating;
 use App\Models\Role;
