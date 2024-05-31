@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-use App\Models\cart;
+use App\Models\Cart;
 use App\Models\category;
 use App\Models\Discount;
 use App\Models\product;
