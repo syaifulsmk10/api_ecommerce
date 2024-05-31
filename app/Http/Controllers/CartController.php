@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Discount;
-use App\Models\Cart;
+use App\Models\cart;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -114,80 +114,47 @@ $cart->save();
 
 }
 
-    // public function getCoupon(Request $request)
-    // {
+public function getCart(Request $request)
+{
+    $user = Auth::user();
+    $cart = Cart::where("user_id", $user->id)->where("status", 1)->get();
 
-    // $coupon_code = $request->coupon_code;
+    $cartItems = [];
+    $totalPrice = 0;
 
-    //    $discount = Discount::where('coupon_code',  $coupon_code)
-    //                     ->first();
+    foreach ($cart as $cartItem) {
+        $product = $cartItem->product;
+        $name = $product->name;
+        $image = $product->image;
+        $desc = $product->desc;
+        $quantity = $cartItem->quantity;
 
-
-    //     if (!$discount || !(Carbon::now()->lessThanOrEqualTo(Carbon::parse($discount->time_end)->endOfDay()))) {
-    //         return response()->json(['message' => 'Invalid or expired voucher code'], 400);
-    //     }
-     
-    //  return response()->json([
-    //         'data' => $discount,
-    //     ], 200);
-    // }
-
-
-    public function getCart(Request $request)
-    {
-              
-     
-    $cart = Cart::where("user_id", Auth::user()->id)->where("status",1)->get();
-
-        $cartItems = [];
-        $totalprice = 0;
-       
-        foreach ($cart as $cartsItem) {
-            $name = $cartsItem->product->name;
-            $image = $cartsItem->product->image;
-            $desc = $cartsItem->product->desc;
-            $quantity =$cartsItem->quantity;
-
-            if($cartsItem->discount_id ==  1){
-                $price = $cartsItem->product->price - ($cartsItem->product->price * ($cartsItem->discount->discount_value/ 100 ));
-            }else{
-
-                $price = $cartsItem->product->price;
-            }
-
-            $totalprice += $cartsItem->quantity * $price;
-
-            $couponCode = $request->coupon_code;
-
-                if ($couponCode) {
-                    $discount = Discount::where('coupon_code', $couponCode)->first();
-                    
-                    if (!$discount || !(Carbon::now()->lessThanOrEqualTo(Carbon::parse($discount->time_end)->endOfDay()))) {
-                    return response()->json(['message' => 'Invalid or expired voucher code'], 400);}
-
-                $totalprice = $totalprice - ($totalprice * $discount->discount_value/100);
-
-            
-                } else {
-                $totalprice = $totalprice;
-                }
-
-             $cartItems[] = [
-            "name" => $name,
-            "image" => $image,
-            "desc" => $desc,
-            "quantity" => $quantity,
-            "price" => $price,
-        ];
+        if ($cartItem->discount_id == 1) {
+            $price = $product->price - ($product->price * ($cartItem->discount->discount_value / 100));
+        } else {
+            $price = $product->price;
         }
 
-        return response()->json([
-            "cartItems" =>  $cartItems,
-             "totalprice" => $totalprice,
-        
-        ]);
+        $totalPrice += $quantity * $price;
     }
 
+    $couponCode = $request->coupon_code;
+
+    if ($couponCode) {
+        $discount = Discount::where('coupon_code', $couponCode)->first();
+
+        if (!$discount || !(Carbon::now()->lessThanOrEqualTo(Carbon::parse($discount->time_end)->endOfDay()))) {
+            return response()->json(['message' => 'Invalid or expired voucher code'], 400);
+        }
+
+        $totalPrice = $totalPrice - ($totalPrice * $discount->discount_value / 100);
+    }
+
+    return response()->json([
+        "cartItems" => $cartItems,
+        "totalPrice" => $totalPrice,
+    ]);
+}
     public function checkOut(){
         $cart = cart::where("user_id", Auth::user()->id)->where("status", 1)->get();
 
