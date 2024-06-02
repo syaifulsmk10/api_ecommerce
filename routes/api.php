@@ -38,7 +38,7 @@ Route::post('/logout', [UserController::class, 'logout'])->middleware('auth:sanc
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [UserController::class, 'getUser']);
-    Route::get('/cart', [CartController::class, 'getcart']);
+    Route::get('/cart', [CartController::class, 'index']);
 
     Route::post('/add-to-cart', [CartController::class, 'addToCart']);
     Route::post('/quantity-cart/{id}', [CartController::class, 'updateQuantity']);
