@@ -4,230 +4,62 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use Illuminate\Http\Request;
-use App\Models\Product;
-use App\Models\Discount;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
-    public function addToCart(Request $request)
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
     {
-        $request->validate([
-            'product_id' => 'required',
-            'quantity' => 'nullable',
-            'coupon_code' => 'nullable'
-        ]);
-
-        $product = Product::findOrFail($request->product_id);
-        $quantity = 1;
-        $discountedPrice = $product->price;
-
-        $discount = Discount::where('product_id', $product->id)
-            ->where(function ($query) {
-                $query->whereNull('coupon_code')
-                    ->orWhere('time_start', '<=', Carbon::now())
-                    ->where('time_end', '>=', Carbon::now());
-            })
-            ->first();
-
-        if($product->stock < 1){
-            return response()->json([
-                "message" => "product finished"
-            ]);
-        }   
- 
-
-        if ($discount) {
-            if ($discount->discount_type == "Product") {
-                $discountedPrice = $product->price - ($product->price * ($discount->discount_value / 100));
-            } else {
-                $discountedPrice = $product->price;
-            }
-        }
-        
-        $totalPrice = $discountedPrice * $quantity;
-       $cartItem = Cart::where('user_id', Auth::user()->id)->where('status', 1)
-        ->where('product_id', $product->id)
-        ->first();
-
-    if ($cartItem) {
-        // If the product is already in the cart, update the quantity and total price
-        $cartItem->quantity += $quantity;
-        $cartItem->total_price += $totalPrice;
-        $cartItem->save();
-    } else {
-        // If the product is not in the cart, create a new cart item
-        Cart::create([
-            "user_id" => Auth::user()->id,
-            "product_id" => $product->id,
-            "quantity" => $quantity,
-            "total_price" => $totalPrice,
-            "discount_id" => $discount ? $discount->id : null,
-        ]);
+        //
     }
 
-    return response()->json(['message' => 'Product added to cart successfully.'], 200);
-}
-
-    
-public function updateQuantity(Request $request, $id)
-{
-  
- $cart = Cart::find($id);
-$cart->quantity = $request->input('quantity');
-
-$totalPrice = 0;
-
-if ($cart->discount_id == null) {
-    $totalPrice = $cart->product->price;
-} else {
-    if (!$cart->discount->discount_id === '1') {
-        $totalPrice = $cart->product->price;
-       
-    } else {
-         $totalPrice = $cart->product->price - ($cart->product->price * ($cart->discount->discount_value / 100));
-          
-    }
-}
-
-$totalpricee = $cart->quantity * $totalPrice;
-
-$cart->total_price = $totalpricee;
-
-$cart->save();
-    
-
-
-     $totalpri = 0;
-        $carts = Cart::where('user_id', Auth::user()->id)->where('status',1)->get();
-        foreach ($carts as $cartsItem) {
-            $totalpri += $cartsItem->total_price;
-        }
-
-    return response()->json([
-        'message' => 'Quantity updated successfully',
-        'totalpricee' => $totalpricee,
-        'totalpri' => $totalpri
-    ]);
-
-}
-
-    // public function getCoupon(Request $request)
-    // {
-
-    // $coupon_code = $request->coupon_code;
-
-    //    $discount = Discount::where('coupon_code',  $coupon_code)
-    //                     ->first();
-
-
-    //     if (!$discount || !(Carbon::now()->lessThanOrEqualTo(Carbon::parse($discount->time_end)->endOfDay()))) {
-    //         return response()->json(['message' => 'Invalid or expired voucher code'], 400);
-    //     }
-     
-    //  return response()->json([
-    //         'data' => $discount,
-    //     ], 200);
-    // }
-
-
-    public function getCart(Request $request)
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
     {
-              
-     
-    $cart = Cart::where("user_id", Auth::user()->id)->where("status",1)->get();
-
-        $cartItems = [];
-        $totalprice = 0;
-       
-        foreach ($cart as $cartsItem) {
-            $name = $cartsItem->product->name;
-            $image = $cartsItem->product->image;
-            $desc = $cartsItem->product->desc;
-            $quantity =$cartsItem->quantity;
-
-            if($cartsItem->discount_id ==  1){
-                $price = $cartsItem->product->price - ($cartsItem->product->price * ($cartsItem->discount->discount_value/ 100 ));
-            }else{
-
-                $price = $cartsItem->product->price;
-            }
-
-            $totalprice += $cartsItem->quantity * $price;
-
-            $couponCode = $request->coupon_code;
-
-                if ($couponCode) {
-                    $discount = Discount::where('coupon_code', $couponCode)->first();
-                    
-                    if (!$discount || !(Carbon::now()->lessThanOrEqualTo(Carbon::parse($discount->time_end)->endOfDay()))) {
-                    return response()->json(['message' => 'Invalid or expired voucher code'], 400);}
-
-                $totalprice = $totalprice - ($totalprice * $discount->discount_value/100);
-
-            
-                } else {
-                $totalprice = $totalprice;
-                }
-
-             $cartItems[] = [
-            "name" => $name,
-            "image" => $image,
-            "desc" => $desc,
-            "quantity" => $quantity,
-            "price" => $price,
-        ];
-        }
-
-        return response()->json([
-            "cartItems" =>  $cartItems,
-             "totalprice" => $totalprice,
-        
-        ]);
+        //
     }
 
-    public function checkOut(){
-        $cart = cart::where("user_id", Auth::user()->id)->where("status", 1)->get();
-
-        foreach($cart as $carts){
-            if(!$carts || $carts->product->stock < $carts->quantity){
-                 return response()->json(['status' => 'Stock tidak mencukupi untuk produk: ' . $carts->product->name], 400);
-            } 
-      
-        }
-
-        foreach($cart as $cartitem){
-
-        $cartitem->product->stock -= $cartitem->quantity;
-        $cartitem->product->save();
-        
-        $cartitem->status = 2;
-        $cartitem->save();
-        }
-              
-         return response()->json(['status' => 'Berhasil Checkout']);
-                    
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        //
     }
 
-
-    public function destroy($id){
-        $cart = cart::find($id);
-        $cart->delete();
-
-        return response()->json([
-            "message" => "cart delete success"
-        ]);
+    /**
+     * Display the specified resource.
+     */
+    public function show(Cart $cart)
+    {
+        //
     }
 
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Cart $cart)
+    {
+        //
+    }
 
-    public function destroyAll(){
-        cart::truncate();
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, Cart $cart)
+    {
+        //
+    }
 
-         return response()->json([
-            "message" => "cart delete all success"
-        ]);
-
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Cart $cart)
+    {
+        //
     }
 }
