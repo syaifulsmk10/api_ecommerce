@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart;
+use App\Models\cart;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -12,7 +12,7 @@ class CartController extends Controller
      */
     public function index()
     {
-        $cart = Cart::all();
+        $cart = cart::all();
         return response()->json([
             "message" => "success"
         ]);
