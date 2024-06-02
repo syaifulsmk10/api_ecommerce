@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-use App\Models\Cart;
+use App\Models\Cart; // Pastikan ini ada
 use App\Models\category;
 use App\Models\Discount;
 use App\Models\product;
@@ -102,7 +102,6 @@ class DatabaseSeeder extends Seeder
             'quantity' => 1,
             'total_price' => $discountedPriceProduct2 * 1
         ]);
-
         rating::create([
             'user_id'=> 2,
             'product_id' => 1,
