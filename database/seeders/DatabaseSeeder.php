@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-
+use App\Models\Cart; // Pastikan ini ada
 use App\Models\category;
 use App\Models\Discount;
 use App\Models\product;
@@ -88,20 +88,20 @@ class DatabaseSeeder extends Seeder
         $discountedPriceProduct1 = $product1->price - ($product1->price * ($discount1->discount_value / 100));
         $discountedPriceProduct2 = $product2->price;
 
-        // Cart::create([
-        //     'product_id' => $product1->id,
-        //     'user_id' => 2,
-        //     'discount_id' => $discount1->id,
-        //     'quantity' => 1,
-        //     'total_price' => $discountedPriceProduct1 * 1
-        // ]);
+        Cart::create([
+            'product_id' => $product1->id,
+            'user_id' => 2,
+            'discount_id' => $discount1->id,
+            'quantity' => 1,
+            'total_price' => $discountedPriceProduct1 * 1
+        ]);
 
-        // Cart::create([
-        //     'user_id' => 2,
-        //     'product_id' => $product2->id,
-        //     'quantity' => 1,
-        //     'total_price' => $discountedPriceProduct2 * 1
-        // ]);
+        Cart::create([
+            'user_id' => 2,
+            'product_id' => $product2->id,
+            'quantity' => 1,
+            'total_price' => $discountedPriceProduct2 * 1
+        ]);
         rating::create([
             'user_id'=> 2,
             'product_id' => 1,

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\cart;
+use App\Models\Cart;
 use App\Models\Discount;
 use App\Models\product;
 use Carbon\Carbon;
@@ -50,7 +50,7 @@ class CartController extends Controller
         }
         
         $totalPrice = $discountedPrice * $quantity;
-       $cartItem = cart::where('user_id', Auth::user()->id)->where('status', 1)
+       $cartItem = Cart::where('user_id', Auth::user()->id)->where('status', 1)
         ->where('product_id', $product->id)
         ->first();
 
@@ -61,7 +61,7 @@ class CartController extends Controller
         $cartItem->save();
     } else {
         // If the product is not in the cart, create a new cart item
-        Cart::create([
+        cart::create([
             "user_id" => Auth::user()->id,
             "product_id" => $product->id,
             "quantity" => $quantity,
