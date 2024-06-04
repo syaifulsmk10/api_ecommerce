@@ -140,9 +140,15 @@ $cart->save();
               
      
     $cart = Cart::where("user_id", Auth::user()->id)->where("status",1)->get();
+//     if ($cart) {
+//     $discounttype = Discount::where('id', $cart->id)->get();
+//     dd($discounttype);
+// } 
 
         $cartItems = [];
         $totalprice = 0;
+        $totalpricee = 0;
+        $discountprice = 0;
        
         foreach ($cart as $cartsItem) {
             $name = $cartsItem->product->name;
@@ -167,11 +173,13 @@ $cart->save();
                     if (!$discount || !(Carbon::now()->lessThanOrEqualTo(Carbon::parse($discount->time_end)->endOfDay()))) {
                     return response()->json(['message' => 'Invalid or expired voucher code'], 400);}
 
-                $totalprice = $totalprice - ($totalprice * $discount->discount_value/100);
+                $totalpricee = $totalprice - ($totalprice * $discount->discount_value/100);
+                $discountprice = $totalprice * ($discount->discount_value / 100);
 
             
                 } else {
-                $totalprice = $totalprice;
+                $totalpricee = $totalprice;
+                $discountprice = 0;
                 }
 
              $cartItems[] = [
@@ -185,7 +193,8 @@ $cart->save();
 
         return response()->json([
             "cartItems" =>  $cartItems,
-             "totalprice" => $totalprice,
+             "totalpricee" => $totalpricee,
+             "discountprice" => $discountprice,
         
         ]);
     }
