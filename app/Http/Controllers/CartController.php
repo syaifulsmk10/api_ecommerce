@@ -73,48 +73,48 @@ class CartController extends Controller
     return response()->json(['message' => 'Product added to cart successfully.'], 200);
 }
 
+        
+    public function updateQuantity(Request $request, $id)
+    {
     
-public function updateQuantity(Request $request, $id)
-{
-  
- $cart = Cart::find($id);
-$cart->quantity = $request->input('quantity');
+    $cart = Cart::find($id);
+    $cart->quantity = $request->input('quantity');
 
-$totalPrice = 0;
+    $totalPrice = 0;
 
-if ($cart->discount_id == null) {
-    $totalPrice = $cart->product->price;
-} else {
-    if (!$cart->discount->discount_id === '1') {
+    if ($cart->discount_id == null) {
         $totalPrice = $cart->product->price;
-       
     } else {
-         $totalPrice = $cart->product->price - ($cart->product->price * ($cart->discount->discount_value / 100));
-          
-    }
-}
-
-$totalpricee = $cart->quantity * $totalPrice;
-
-$cart->total_price = $totalpricee;
-
-$cart->save();
-    
-
-
-     $totalpri = 0;
-        $carts = Cart::where('user_id', Auth::user()->id)->where('status',1)->get();
-        foreach ($carts as $cartsItem) {
-            $totalpri += $cartsItem->total_price;
+        if (!$cart->discount->discount_id === '1') {
+            $totalPrice = $cart->product->price;
+        
+        } else {
+            $totalPrice = $cart->product->price - ($cart->product->price * ($cart->discount->discount_value / 100));
+            
         }
+    }
 
-    return response()->json([
-        'message' => 'Quantity updated successfully',
-        'totalpricee' => $totalpricee,
-        'totalpri' => $totalpri
-    ]);
+    $totalpricee = $cart->quantity * $totalPrice;
 
-}
+    $cart->total_price = $totalpricee;
+
+    $cart->save();
+        
+
+
+        $totalpri = 0;
+            $carts = Cart::where('user_id', Auth::user()->id)->where('status',1)->get();
+            foreach ($carts as $cartsItem) {
+                $totalpri += $cartsItem->total_price;
+            }
+
+        return response()->json([
+            'message' => 'Quantity updated successfully',
+            'totalpricee' => $totalpricee,
+            'totalpri' => $totalpri
+        ]);
+
+    }
 
     // public function getCoupon(Request $request)
     // {
@@ -156,7 +156,7 @@ $cart->save();
             $desc = $cartsItem->product->desc;
             $quantity =$cartsItem->quantity;
 
-            if($cartsItem->discount_id ==  1){
+            if($cartsItem->discount_id ==  "1"){
                 $price = $cartsItem->product->price - ($cartsItem->product->price * ($cartsItem->discount->discount_value/ 100 ));
             }else{
 
